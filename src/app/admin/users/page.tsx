@@ -74,82 +74,81 @@ export default function AdminUsersPage() {
         );
 
     return(
-        <>
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                    <CardTitle>User Management</CardTitle>
-                    <CardDescription>View and manage all registered users.</CardDescription>
-                </div>
-                 <div className="relative w-full max-w-sm">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        type="search"
-                        placeholder="Search by name or email..."
-                        className="pl-8"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                </div>
-            </CardHeader>
-            <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Balance</TableHead>
-                            <TableHead>Spins</TableHead>
-                            <TableHead>Ads</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {regularUsers.length > 0 ? regularUsers.map(user => (
-                            <TableRow key={user.id}>
-                                <TableCell className="font-medium">{user.name}</TableCell>
-                                <TableCell>{user.email}</TableCell>
-                                <TableCell>₹{user.balance.toFixed(2)}</TableCell>
-                                <TableCell>{user.spinCount}</TableCell>
-                                <TableCell>{user.adsWatched}</TableCell>
-                                <TableCell>
-                                    <Badge variant={user.isBlocked ? 'destructive' : 'secondary'}>
-                                        {user.isBlocked ? 'Blocked' : 'Active'}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <div className="flex gap-2 justify-end">
-                                        <AlertDialogTrigger asChild>
-                                            <Button variant="outline" size="sm" onClick={() => setSelectedUser({id: user.id, name: user.name})}>
-                                                <Wallet className="mr-2 h-4 w-4" />
-                                                Manage Balance
-                                            </Button>
-                                        </AlertDialogTrigger>
-                                        <Button 
-                                            variant={user.isBlocked ? "secondary" : "destructive"} 
-                                            size="sm"
-                                            onClick={() => handleToggleBlock(user.id, user.name, user.isBlocked)}
-                                        >
-                                            {user.isBlocked ? <ShieldCheck className="mr-2 h-4 w-4" /> : <ShieldBan className="mr-2 h-4 w-4" />}
-                                            {user.isBlocked ? 'Unblock' : 'Block'}
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        )) : (
+        <AlertDialog onOpenChange={(open) => { if (!open) { setSelectedUser(null); setAmount(0); }}}>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>User Management</CardTitle>
+                        <CardDescription>View and manage all registered users.</CardDescription>
+                    </div>
+                    <div className="relative w-full max-w-sm">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Input
+                            type="search"
+                            placeholder="Search by name or email..."
+                            className="pl-8"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <Table>
+                        <TableHeader>
                             <TableRow>
-                                <TableCell colSpan={7} className="h-24 text-center">
-                                    No users found.
-                                </TableCell>
+                                <TableHead>Name</TableHead>
+                                <TableHead>Email</TableHead>
+                                <TableHead>Balance</TableHead>
+                                <TableHead>Spins</TableHead>
+                                <TableHead>Ads</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </CardContent>
-        </Card>
-        
-        <AlertDialog onOpenChange={(open) => !open && setSelectedUser(null)}>
+                        </TableHeader>
+                        <TableBody>
+                            {regularUsers.length > 0 ? regularUsers.map(user => (
+                                <TableRow key={user.id}>
+                                    <TableCell className="font-medium">{user.name}</TableCell>
+                                    <TableCell>{user.email}</TableCell>
+                                    <TableCell>₹{user.balance.toFixed(2)}</TableCell>
+                                    <TableCell>{user.spinCount}</TableCell>
+                                    <TableCell>{user.adsWatched}</TableCell>
+                                    <TableCell>
+                                        <Badge variant={user.isBlocked ? 'destructive' : 'secondary'}>
+                                            {user.isBlocked ? 'Blocked' : 'Active'}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <div className="flex gap-2 justify-end">
+                                            <AlertDialogTrigger asChild>
+                                                <Button variant="outline" size="sm" onClick={() => setSelectedUser({id: user.id, name: user.name})}>
+                                                    <Wallet className="mr-2 h-4 w-4" />
+                                                    Manage Balance
+                                                </Button>
+                                            </AlertDialogTrigger>
+                                            <Button 
+                                                variant={user.isBlocked ? "secondary" : "destructive"} 
+                                                size="sm"
+                                                onClick={() => handleToggleBlock(user.id, user.name, user.isBlocked)}
+                                            >
+                                                {user.isBlocked ? <ShieldCheck className="mr-2 h-4 w-4" /> : <ShieldBan className="mr-2 h-4 w-4" />}
+                                                {user.isBlocked ? 'Unblock' : 'Block'}
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            )) : (
+                                <TableRow>
+                                    <TableCell colSpan={7} className="h-24 text-center">
+                                        No users found.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </CardContent>
+            </Card>
+            
             <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Manage {selectedUser?.name}'s Balance</AlertDialogTitle>
@@ -166,17 +165,16 @@ export default function AdminUsersPage() {
                             id="amount"
                             type="number"
                             value={amount}
-                            onChange={(e) => setAmount(parseFloat(e.target.value))}
+                            onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
                             className="col-span-3"
                         />
                     </div>
                 </div>
                 <AlertDialogFooter>
-                  <AlertDialogCancel onClick={() => setAmount(0)}>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction onClick={handleBalanceUpdate}>Update Balance</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
-        </>
     );
 }
