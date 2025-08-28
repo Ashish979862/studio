@@ -17,7 +17,7 @@ export default function WatchAdsPage() {
 
     const handleWatchAd = () => {
         setIsWatching(true);
-        window.open("https://www.profitableratecpm.com/njseimy1r?key=29f8739305aa2e02dceabda39abaa733", "_blank");
+        window.open("https://www.effectivecpmrate.com/njseimy1r?key=29f8739305aa2e02dceabda39abaa733", "_blank");
 
         // Simulate ad watching time
         setTimeout(() => {
