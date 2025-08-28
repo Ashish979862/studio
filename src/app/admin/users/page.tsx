@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ShieldBan, ShieldCheck, Wallet, Search } from "lucide-react";
+import { Loader2, ShieldBan, ShieldCheck, Wallet, Search, Eye } from "lucide-react";
 import { useState } from "react";
 import {
   AlertDialog,
@@ -24,14 +24,15 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 
 export default function AdminUsersPage() {
     const { users, toggleUserBlock, loading, adminUpdateUserBalance } = useAuth();
     const { toast } = useToast();
+    const router = useRouter();
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedUser, setSelectedUser] = useState<{id: string, name: string} | null>(null);
     const [amount, setAmount] = useState(0);
@@ -99,8 +100,6 @@ export default function AdminUsersPage() {
                                 <TableHead>Name</TableHead>
                                 <TableHead>Email</TableHead>
                                 <TableHead>Balance</TableHead>
-                                <TableHead>Spins</TableHead>
-                                <TableHead>Ads</TableHead>
                                 <TableHead>Status</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
@@ -111,8 +110,6 @@ export default function AdminUsersPage() {
                                     <TableCell className="font-medium">{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell>₹{user.balance.toFixed(2)}</TableCell>
-                                    <TableCell>{user.spinCount}</TableCell>
-                                    <TableCell>{user.adsWatched}</TableCell>
                                     <TableCell>
                                         <Badge variant={user.isBlocked ? 'destructive' : 'secondary'}>
                                             {user.isBlocked ? 'Blocked' : 'Active'}
@@ -120,10 +117,14 @@ export default function AdminUsersPage() {
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex gap-2 justify-end">
+                                            <Button variant="outline" size="sm" onClick={() => router.push(`/admin/users/${user.id}`)}>
+                                                <Eye className="mr-2 h-4 w-4" />
+                                                View
+                                            </Button>
                                             <AlertDialogTrigger asChild>
                                                 <Button variant="outline" size="sm" onClick={() => setSelectedUser({id: user.id, name: user.name})}>
                                                     <Wallet className="mr-2 h-4 w-4" />
-                                                    Manage Balance
+                                                    Balance
                                                 </Button>
                                             </AlertDialogTrigger>
                                             <Button 
@@ -139,7 +140,7 @@ export default function AdminUsersPage() {
                                 </TableRow>
                             )) : (
                                 <TableRow>
-                                    <TableCell colSpan={7} className="h-24 text-center">
+                                    <TableCell colSpan={5} className="h-24 text-center">
                                         No users found.
                                     </TableCell>
                                 </TableRow>
