@@ -67,7 +67,7 @@ export default function SpinAndEarnPage() {
         if (spinning || !user || cooldown > 0) return;
 
         setSpinning(true);
-        window.open("about:blank", "_blank"); // Adsterra direct link simulation
+        window.open("https://www.profitableratecpm.com/njseimy1r?key=29f8739305aa2e02dceabda39abaa733", "_blank"); // Adsterra direct link simulation
 
         setTimeout(() => {
             const prizePoolIndex = Math.floor(Math.random() * prizePool.length);
