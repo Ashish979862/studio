@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { MessageSquare } from "lucide-react";
 
 export default function CommunityPage() {
-    const whatsappNumber = "9102305415";
+    const whatsappNumber = "919102305415";
     const whatsappLink = `https://wa.me/${whatsappNumber}`;
     return (
         <Card className="bg-secondary text-center">

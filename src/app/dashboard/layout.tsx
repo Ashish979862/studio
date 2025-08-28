@@ -24,7 +24,7 @@ import { PromotionIcon } from "@/components/icons/promotion-icon";
 
 const navItems = [
   { href: "/dashboard", icon: EarnListIcon, label: "Earn List" },
-  { href: "/dashboard/community", icon: CommunityIcon, label: "Community" },
+  { href: "/dashboard/community", icon: MessageSquare, label: "Help" },
   { href: "/dashboard/promotion", icon: PromotionIcon, label: "Promotion" },
   { href: "/dashboard/profile", icon: User, label: "Me" },
 ];
