@@ -13,11 +13,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { CalendarCheck, Clapperboard, Copy, Edit2, Loader2, Trophy, User } from "lucide-react";
+import { CalendarCheck, Clapperboard, Copy, Edit2, Loader2, LogOut, Trophy, User } from "lucide-react";
 import React, { useRef } from "react";
 
 export default function ProfilePage() {
-  const { user, updateUserProfilePicture } = useAuth();
+  const { user, logout, updateUserProfilePicture } = useAuth();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -137,6 +137,11 @@ export default function ProfilePage() {
             </CardContent>
         </Card>
       </div>
+
+       <Button variant="destructive" onClick={logout} className="mt-4">
+        <LogOut className="mr-2 h-4 w-4" />
+        Log Out
+      </Button>
 
     </div>
   );
