@@ -9,14 +9,25 @@ import { Loader2, PartyPopper, Trophy } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const segments = [
+    { value: 0.10, label: "₹0.10" },
     { value: 0.25, label: "₹0.25" },
-    { value: 0.5, label: "₹0.50" },
-    { value: 1, label: "₹1" },
-    { value: 2, label: "₹2" },
-    { value: 3, label: "₹3" },
-    { value: 5, label: "₹5" },
+    { value: 0.10, label: "₹0.10" },
+    { value: 0.50, label: "₹0.50" },
+    { value: 0.10, label: "₹0.10" },
     { value: 0, label: "Try Again" },
+    { value: 0.10, label: "₹0.10" },
+    { value: 1.00, label: "₹1.00" },
+    { value: 0.10, label: "₹0.10" },
     { value: 0.75, label: "₹0.75" },
+];
+
+const prizePool = [
+    // 80% chance for ₹0.10
+    ...Array(8).fill({ value: 0.10, label: "₹0.10" }),
+    // 10% chance for higher prizes
+    { value: 0.25, label: "₹0.25" },
+    // 10% chance for "Better Luck Next Time"
+    { value: 0, label: "Try Again" },
 ];
 
 const bonuses = [
@@ -54,12 +65,15 @@ export default function SpinAndEarnPage() {
         window.open("about:blank", "_blank"); // Adsterra direct link simulation
 
         setTimeout(() => {
-            const segmentAngle = 360 / segments.length;
-            const randomIndex = Math.floor(Math.random() * segments.length);
-            const prize = segments[randomIndex];
+            const prizePoolIndex = Math.floor(Math.random() * prizePool.length);
+            const prize = prizePool[prizePoolIndex];
+
+            // Find the first segment on the wheel that matches the prize value to determine where to stop
+            const targetSegmentIndex = segments.findIndex(s => s.value === prize.value);
             
+            const segmentAngle = 360 / segments.length;
             const randomOffset = Math.random() * segmentAngle * 0.8 - (segmentAngle * 0.4);
-            const targetRotation = 360 * 5 + (360 - (randomIndex * segmentAngle + segmentAngle / 2)) + randomOffset;
+            const targetRotation = 360 * 5 + (360 - (targetSegmentIndex * segmentAngle + segmentAngle / 2)) + randomOffset;
             
             setRotation(prev => prev + targetRotation);
             addSpin();
