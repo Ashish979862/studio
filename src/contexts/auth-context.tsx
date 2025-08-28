@@ -21,6 +21,7 @@ interface AuthContextType {
   updateWithdrawalStatus: (id: string, status: 'approved' | 'rejected') => void;
   toggleUserBlock: (userId: string) => void;
   allWithdrawals: WithdrawalRequest[];
+  updateUserProfilePicture: (dataUrl: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -44,7 +45,8 @@ const initialUsers: User[] = [
         totalEarnings: 1050,
         isAdmin: true,
         isBlocked: false,
-        referredBy: null
+        referredBy: null,
+        profilePicture: ''
     },
     { 
         id: '2', 
@@ -59,7 +61,8 @@ const initialUsers: User[] = [
         totalEarnings: 55,
         isAdmin: false,
         isBlocked: false,
-        referredBy: 'ADMINREF'
+        referredBy: 'ADMINREF',
+        profilePicture: ''
     },
 ];
 
@@ -177,6 +180,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       isAdmin: false,
       isBlocked: false,
       referredBy: referrer ? referrer.id : null,
+      profilePicture: ''
     };
     
     const updatedUsers = [...users];
@@ -297,9 +301,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       syncData(user, updatedUsers);
   };
 
+  const updateUserProfilePicture = (dataUrl: string) => {
+    updateUserState(u => ({...u, profilePicture: dataUrl}));
+  }
+
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, updateBalance, addSpin, addAdWatch, addCheckIn, addWithdrawal, users, updateWithdrawalStatus, toggleUserBlock, allWithdrawals }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, updateBalance, addSpin, addAdWatch, addCheckIn, addWithdrawal, users, updateWithdrawalStatus, toggleUserBlock, allWithdrawals, updateUserProfilePicture }}>
       {children}
     </AuthContext.Provider>
   );

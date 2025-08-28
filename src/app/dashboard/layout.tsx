@@ -58,11 +58,11 @@ export default function DashboardLayout({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
              <Avatar className="h-12 w-12 border-2 border-accent">
-                <AvatarImage src={`https://api.dicebear.com/8.x/bottts/svg?seed=${user.name}`} alt={user.name} />
+                <AvatarImage src={user.profilePicture || `https://api.dicebear.com/8.x/bottts/svg?seed=${user.name}`} alt={user.name} />
                 <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-xs text-muted-foreground">UID: {user.id}</p>
+              <p className="font-semibold text-lg">{user.name}</p>
               <div className="flex items-center gap-2">
                 <Gem className="h-4 w-4 text-amber-400" />
                 <p className="font-bold text-lg">{user.balance.toFixed(2)} / {user.totalEarnings.toFixed(2)}</p>

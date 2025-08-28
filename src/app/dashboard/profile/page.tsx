@@ -13,11 +13,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { CalendarCheck, Clapperboard, Copy, Loader2, Trophy, User } from "lucide-react";
+import { CalendarCheck, Clapperboard, Copy, Edit2, Loader2, Trophy, User } from "lucide-react";
+import React, { useRef } from "react";
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user, updateUserProfilePicture } = useAuth();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!user) {
     return <div className="flex h-full items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
@@ -29,6 +31,26 @@ export default function ProfilePage() {
       title: `${label} Copied!`,
       description: `${text} copied to clipboard.`,
     });
+  };
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        updateUserProfilePicture(base64String);
+        toast({
+          title: "Profile Picture Updated",
+          description: "Your new photo has been saved.",
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const stats = [
@@ -50,10 +72,22 @@ export default function ProfilePage() {
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-1">
             <CardHeader className="items-center text-center">
-                <Avatar className="w-24 h-24 mb-4">
-                  <AvatarImage src={`https://api.dicebear.com/8.x/bottts/svg?seed=${user.name}`} alt={user.name} />
-                  <AvatarFallback className="text-3xl">{user.name.charAt(0)}</AvatarFallback>
-                </Avatar>
+                <div className="relative">
+                  <Avatar className="w-24 h-24 mb-4 cursor-pointer" onClick={handleAvatarClick}>
+                    <AvatarImage src={user.profilePicture || `https://api.dicebear.com/8.x/bottts/svg?seed=${user.name}`} alt={user.name} />
+                    <AvatarFallback className="text-3xl">{user.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <Button variant="outline" size="icon" className="absolute bottom-4 right-0 rounded-full h-8 w-8" onClick={handleAvatarClick}>
+                    <Edit2 className="h-4 w-4" />
+                  </Button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept="image/*"
+                  />
+                </div>
                 <CardTitle className="font-headline text-2xl">{user.name}</CardTitle>
                 <CardDescription>{user.email}</CardDescription>
             </CardHeader>

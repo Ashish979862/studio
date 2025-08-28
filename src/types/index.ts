@@ -15,6 +15,7 @@ export interface User {
   isAdmin: boolean;
   isBlocked: boolean;
   referredBy: string | null;
+  profilePicture?: string;
 }
 
 export interface WithdrawalRequest {
