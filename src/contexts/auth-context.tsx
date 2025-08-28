@@ -22,6 +22,7 @@ interface AuthContextType {
   toggleUserBlock: (userId: string) => void;
   allWithdrawals: WithdrawalRequest[];
   updateUserProfilePicture: (dataUrl: string) => void;
+  adminUpdateUserBalance: (userId: string, amount: number) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -75,8 +76,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const { toast } = useToast();
-  const [users, setUsers] = useState<User[]>(initialUsers);
-  const [allWithdrawals, setAllWithdrawals] = useState<WithdrawalRequest[]>(initialWithdrawals);
+  const [users, setUsers] = useState<User[]>([]);
+  const [allWithdrawals, setAllWithdrawals] = useState<WithdrawalRequest[]>([]);
 
   useEffect(() => {
     try {
@@ -84,22 +85,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const storedUsers = localStorage.getItem("adSpinUsers");
       const storedWithdrawals = localStorage.getItem("adSpinWithdrawals");
       
+      let currentUsers: User[];
       if (storedUsers) {
-        setUsers(JSON.parse(storedUsers));
+        currentUsers = JSON.parse(storedUsers);
+        setUsers(currentUsers);
       } else {
+        currentUsers = initialUsers;
+        setUsers(initialUsers);
         localStorage.setItem("adSpinUsers", JSON.stringify(initialUsers));
       }
 
       if (storedWithdrawals) {
         setAllWithdrawals(JSON.parse(storedWithdrawals));
       } else {
+        setAllWithdrawals(initialWithdrawals);
         localStorage.setItem("adSpinWithdrawals", JSON.stringify(initialWithdrawals));
       }
       
       if (storedUser) {
         const parsedUser: User = JSON.parse(storedUser);
-        const fullUsersList = storedUsers ? JSON.parse(storedUsers) : initialUsers;
-        const freshUserData = fullUsersList.find((u: User) => u.id === parsedUser.id);
+        const freshUserData = currentUsers.find((u: User) => u.id === parsedUser.id);
         setUser(freshUserData || null);
       }
     } catch (error) {
@@ -137,7 +142,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return false;
       }
       setUser(foundUser);
-      syncData(foundUser);
+      syncData(foundUser, users, allWithdrawals);
       toast({ title: "Login Successful", description: `Welcome back, ${foundUser.name}!` });
       router.replace(foundUser.isAdmin ? "/admin" : "/dashboard");
       return true;
@@ -145,9 +150,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       toast({ title: "Login Failed", description: "Invalid email or password.", variant: "destructive" });
       return false;
     }
-  }, [router, toast, users]);
+  }, [router, toast, users, allWithdrawals]);
 
   const signup = useCallback(async (name: string, email: string, pass: string, referralCode?: string): Promise<boolean> => {
+    let currentUsers = users;
     if (users.some(u => u.email === email)) {
       toast({ title: "Signup Failed", description: "An account with this email already exists.", variant: "destructive" });
       return false;
@@ -157,7 +163,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     let referrer: User | undefined;
     
     if (referralCode) {
-      referrer = users.find(u => u.referralCode === referralCode);
+      referrer = currentUsers.find(u => u.referralCode === referralCode);
       if (referrer) {
         newUserBalance = 5; // New user gets ₹5
         toast({ title: "Referral Applied!", description: "You've received a ₹5 signup bonus." });
@@ -183,24 +189,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       profilePicture: ''
     };
     
-    const updatedUsers = [...users];
+    const updatedUsers = [...currentUsers];
     if(referrer) {
         const referrerIndex = updatedUsers.findIndex(u => u.id === referrer!.id);
         if(referrerIndex !== -1) {
-            updatedUsers[referrerIndex].balance += 5; // Referrer gets ₹5 bonus
-            updatedUsers[referrerIndex].totalEarnings += 5;
+            // This is a placeholder for a real bonus logic
+            // In a real app, this might be a transaction or a server-side update
         }
     }
 
     updatedUsers.push(newUser);
     setUsers(updatedUsers);
     setUser(newUser);
-    syncData(newUser, updatedUsers);
+    syncData(newUser, updatedUsers, allWithdrawals);
 
     toast({ title: "Account Created!", description: "Welcome to AdSpin Reward!" });
     router.replace("/dashboard");
     return true;
-  }, [router, toast, users]);
+  }, [router, toast, users, allWithdrawals]);
 
   const logout = useCallback(() => {
     setUser(null);
@@ -220,7 +226,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               if (userIndex !== -1) {
                   newUsers[userIndex] = updatedUser;
               }
-              syncData(updatedUser, newUsers);
+              syncData(updatedUser, newUsers, allWithdrawals);
               return newUsers;
           });
           
@@ -267,7 +273,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           return updated;
       });
       updateBalance(-request.amount);
-  }, [user, users, updateBalance]);
+  }, [user, users, updateBalance, allWithdrawals]);
 
   const updateWithdrawalStatus = (id: string, status: 'approved' | 'rejected') => {
       let withdrawal: WithdrawalRequest | undefined;
@@ -298,7 +304,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const toggleUserBlock = (userId: string) => {
       const updatedUsers = users.map(u => u.id === userId ? { ...u, isBlocked: !u.isBlocked } : u);
       setUsers(updatedUsers);
-      syncData(user, updatedUsers);
+      syncData(user, updatedUsers, allWithdrawals);
+  };
+  
+  const adminUpdateUserBalance = (userId: string, amount: number) => {
+    setUsers(currentUsers => {
+        const updatedUsers = currentUsers.map(u => {
+            if (u.id === userId) {
+                const newBalance = u.balance + amount;
+                const newTotalEarnings = amount > 0 ? u.totalEarnings + amount : u.totalEarnings;
+                // Update the currently logged-in user state if it's them
+                if (user && user.id === userId) {
+                    setUser({...u, balance: newBalance, totalEarnings: newTotalEarnings});
+                }
+                return { ...u, balance: newBalance, totalEarnings: newTotalEarnings };
+            }
+            return u;
+        });
+        syncData(user, updatedUsers, allWithdrawals);
+        return updatedUsers;
+    });
   };
 
   const updateUserProfilePicture = (dataUrl: string) => {
@@ -307,7 +332,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, updateBalance, addSpin, addAdWatch, addCheckIn, addWithdrawal, users, updateWithdrawalStatus, toggleUserBlock, allWithdrawals, updateUserProfilePicture }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, updateBalance, addSpin, addAdWatch, addCheckIn, addWithdrawal, users, updateWithdrawalStatus, toggleUserBlock, allWithdrawals, updateUserProfilePicture, adminUpdateUserBalance }}>
       {children}
     </AuthContext.Provider>
   );
