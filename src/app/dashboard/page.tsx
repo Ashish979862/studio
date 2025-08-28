@@ -12,65 +12,32 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
-import { Calendar, Clapperboard, Loader2, Smartphone, Trophy, Users, Check, MessageSquare, Phone } from "lucide-react";
+import { Calendar, Clapperboard, Loader2, Smartphone, Trophy, Users, Check, MessageSquare, Phone, Film } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 
 const tasks = [
-    { 
-        title: 'Send SMS Sim1',
-        description: 'Rs 0.2 per success Sim1',
-        reward: 220,
-        currentProgress: 108,
-        totalProgress: 1100,
-        icon: MessageSquare,
-        href: '/dashboard/tasks/sms1'
-    },
-    { 
-        title: 'Send SMS Sim2',
-        description: 'Rs 0.2 per success Sim2',
-        reward: 220,
-        currentProgress: 0,
-        totalProgress: 1100,
-        icon: MessageSquare,
-        href: '/dashboard/tasks/sms2'
-    },
-    { 
-        title: 'Whatsapp Message',
-        description: 'Rs 0.5 per success',
-        reward: 1100,
-        currentProgress: 0,
-        totalProgress: 2200,
-        icon: Clapperboard,
-        href: '/dashboard/tasks/whatsapp'
-    },
     {
-        title: 'Free Spin',
-        description: 'Free Spin get max Rs 10',
+        title: 'Spin & Earn',
+        description: 'Spin the wheel to win rewards',
         reward: 10,
-        currentProgress: 406,
-        totalProgress: 595,
         icon: Trophy,
         href: '/dashboard/spin-earn'
     },
     {
+        title: 'Watch Ads',
+        description: 'Watch ads to earn money',
+        reward: 0.10,
+        icon: Film,
+        href: '/dashboard/watch-ads'
+    },
+    {
         title: 'Daily check in',
-        description: 'Daily check in Rs 1',
+        description: 'Daily check in for bonus',
         reward: 1,
-        currentProgress: 0,
-        totalProgress: 1,
         icon: Calendar,
         href: '/dashboard/check-in'
     },
-    {
-        title: 'Bind mobile number',
-        description: '',
-        reward: 0,
-        currentProgress: 1,
-        totalProgress: 1,
-        icon: Phone,
-        href: '/dashboard/profile'
-    }
 ]
 
 export default function DashboardPage() {
@@ -125,17 +92,14 @@ export default function DashboardPage() {
                                     <task.icon className="h-6 w-6" />
                                 </div>
                                 <div className="flex-1">
-                                    <div className="flex justify-between items-center">
-                                        <h3 className="font-bold">{task.title}</h3>
-                                        <p className="text-xs">({task.currentProgress} / {task.totalProgress})</p>
-                                    </div>
+                                    <h3 className="font-bold">{task.title}</h3>
                                     <div className="flex justify-between items-center mt-1">
                                         <p className="text-xs opacity-80">{task.description}</p>
-                                        {task.reward > 0 && <p className="text-xs font-bold text-amber-300">+Rs{task.reward}</p>}
+                                        {task.reward > 0 && <p className="text-xs font-bold text-amber-300">+Rs{task.reward.toFixed(2)}</p>}
                                     </div>
                                 </div>
                                 <Button size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold" onClick={() => router.push(task.href)}>
-                                    {task.currentProgress >= task.totalProgress ? <Check/> : "Get"}
+                                    Go
                                 </Button>
                             </CardContent>
                         </Card>
