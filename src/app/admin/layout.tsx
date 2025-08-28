@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import {
@@ -105,6 +105,7 @@ export default function AdminLayout({
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col">
+              <SheetTitle className="sr-only">Admin Navigation</SheetTitle>
               <nav className="grid gap-2 text-lg font-medium">
                 <Link
                   href="#"
