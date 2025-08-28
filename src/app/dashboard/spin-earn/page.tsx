@@ -25,7 +25,12 @@ const prizePool = [
     // 80% chance for ₹0.10
     ...Array(8).fill({ value: 0.10, label: "₹0.10" }),
     // 10% chance for higher prizes
-    { value: 0.25, label: "₹0.25" },
+    ...[
+        { value: 0.25, label: "₹0.25" },
+        { value: 0.50, label: "₹0.50" },
+        { value: 0.75, label: "₹0.75" },
+        { value: 1.00, label: "₹1.00" },
+    ].sort(() => 0.5 - Math.random()).slice(0,1), // pick one random high prize
     // 10% chance for "Better Luck Next Time"
     { value: 0, label: "Try Again" },
 ];
@@ -131,21 +136,21 @@ export default function SpinAndEarnPage() {
     return (
         <div className="flex flex-col items-center justify-center gap-8">
             <div className="text-center">
-                <h1 className="text-3xl font-bold font-headline">Spin & Earn</h1>
+                <h1 className="text-3xl font-bold font-headline text-foreground">Spin & Earn</h1>
                 <p className="text-muted-foreground">Test your luck and win exciting prizes!</p>
             </div>
 
             <SpinWheel segments={segments} rotation={rotation} spinning={spinning} />
             
             <div className="flex flex-col items-center gap-4 w-full max-w-sm">
-                <Button onClick={handleSpin} disabled={spinning || cooldown > 0} className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground">
+                <Button onClick={handleSpin} disabled={spinning || cooldown > 0} className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg">
                     {spinning ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Trophy className="mr-2 h-5 w-5" />}
                     {cooldown > 0 ? `Cooldown: ${formatCooldown(cooldown)}` : "SPIN NOW"}
                 </Button>
                 <p className="text-sm text-muted-foreground">Total Spins: {user.spinCount}</p>
             </div>
 
-            <Card className="w-full max-w-lg">
+            <Card className="w-full max-w-lg bg-secondary">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <PartyPopper className="text-amber-500" />
@@ -157,7 +162,7 @@ export default function SpinAndEarnPage() {
                     {bonuses.map(bonus => (
                         <div key={bonus.spins} className="flex items-center justify-between">
                             <p>Reward at {bonus.spins} spins:</p>
-                            <p className="font-bold text-primary">₹{bonus.reward}</p>
+                            <p className="font-bold text-accent">₹{bonus.reward}</p>
                         </div>
                     ))}
                 </CardContent>

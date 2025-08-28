@@ -86,7 +86,7 @@ export default function WithdrawPage() {
   return (
     <div className="grid gap-8 md:grid-cols-5">
       <div className="md:col-span-3">
-        <Card>
+        <Card className="bg-secondary">
           <CardHeader>
             <CardTitle className="font-headline text-3xl flex items-center gap-2">
               <Banknote className="h-8 w-8" />
@@ -99,11 +99,11 @@ export default function WithdrawPage() {
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="flex items-center gap-4 rounded-lg border bg-card p-4">
+                <div className="flex items-center gap-4 rounded-lg border border-primary/20 bg-card p-4">
                   <Wallet className="h-6 w-6 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">Available Balance</p>
-                    <p className="text-xl font-bold">₹{user.balance.toFixed(2)}</p>
+                    <p className="text-xl font-bold text-accent">₹{user.balance.toFixed(2)}</p>
                   </div>
                 </div>
                 <FormField
@@ -133,10 +133,10 @@ export default function WithdrawPage() {
                   )}
                 />
 
-                <Card className="bg-secondary/50">
+                <Card className="bg-card">
                     <CardContent className="p-4 space-y-2 text-sm">
                         <div className="flex justify-between"><span>Processing Fee (5%):</span> <span className="font-medium">- ₹{processingFee.toFixed(2)}</span></div>
-                        <div className="flex justify-between font-bold text-base"><span>You will receive:</span> <span>₹{totalCredited > 0 ? totalCredited.toFixed(2) : '0.00'}</span></div>
+                        <div className="flex justify-between font-bold text-base text-accent"><span>You will receive:</span> <span>₹{totalCredited > 0 ? totalCredited.toFixed(2) : '0.00'}</span></div>
                     </CardContent>
                 </Card>
 
@@ -147,7 +147,7 @@ export default function WithdrawPage() {
                     </p>
                 </div>
 
-                <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={form.formState.isSubmitting}>
                   {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Request Withdrawal
                 </Button>
@@ -158,7 +158,7 @@ export default function WithdrawPage() {
       </div>
 
       <div className="md:col-span-2">
-        <Card>
+        <Card className="bg-secondary">
           <CardHeader>
             <CardTitle>Withdrawal History</CardTitle>
           </CardHeader>
@@ -179,7 +179,7 @@ export default function WithdrawPage() {
                     <TableCell>
                       <Badge
                         variant={w.status === 'approved' ? 'default' : w.status === 'rejected' ? 'destructive' : 'secondary'}
-                        className={cn(w.status === 'approved' && "bg-emerald-500/80 text-white")}
+                        className={cn(w.status === 'approved' && "bg-accent/80 text-accent-foreground", w.status === 'pending' && "bg-amber-500/80 text-white")}
                       >
                         {w.status}
                       </Badge>

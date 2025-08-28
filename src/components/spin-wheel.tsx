@@ -18,7 +18,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({
   const segmentAngle = 360 / segmentCount;
   const colors = [
     "hsl(var(--primary))",
-    "hsl(var(--background))",
+    "hsl(var(--secondary))",
   ];
 
   const getSegmentStyle = (index: number) => {
@@ -52,7 +52,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({
           >
              <span 
                 className="font-bold text-sm md:text-base -rotate-90"
-                style={{ color: (index + 1) % 2 === 0 ? "hsl(var(--primary))" : "hsl(var(--foreground))" }}
+                style={{ color: (index) % 2 === 0 ? "hsl(var(--card-foreground))" : "hsl(var(--card-foreground))" }}
              >
                 {segment.label}
              </span>

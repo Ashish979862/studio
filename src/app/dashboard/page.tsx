@@ -8,69 +8,74 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
-import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
-import {
-  ArrowRight,
-  Banknote,
-  CalendarCheck,
-  Clapperboard,
-  Copy,
-  DollarSign,
-  Loader2,
-  Trophy,
-  Users,
-  Wallet,
-} from "lucide-react";
-import Link from "next/link";
+import { Calendar, Clapperboard, Loader2, Smartphone, Trophy, Users, Check, MessageSquare, Phone } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-const featureCards = [
+
+const tasks = [
     { 
-        title: 'Daily Check-in', 
-        description: 'Earn rewards every day.', 
-        href: '/dashboard/check-in', 
-        icon: CalendarCheck,
-        color: 'text-sky-500',
-        bg: 'bg-sky-500/10'
+        title: 'Send SMS Sim1',
+        description: 'Rs 0.2 per success Sim1',
+        reward: 220,
+        currentProgress: 108,
+        totalProgress: 1100,
+        icon: MessageSquare,
+        href: '/dashboard/tasks/sms1'
     },
     { 
-        title: 'Watch Ads', 
-        description: 'Get paid for watching short ads.', 
-        href: '/dashboard/watch-ads', 
+        title: 'Send SMS Sim2',
+        description: 'Rs 0.2 per success Sim2',
+        reward: 220,
+        currentProgress: 0,
+        totalProgress: 1100,
+        icon: MessageSquare,
+        href: '/dashboard/tasks/sms2'
+    },
+    { 
+        title: 'Whatsapp Message',
+        description: 'Rs 0.5 per success',
+        reward: 1100,
+        currentProgress: 0,
+        totalProgress: 2200,
         icon: Clapperboard,
-        color: 'text-rose-500',
-        bg: 'bg-rose-500/10'
+        href: '/dashboard/tasks/whatsapp'
     },
-    { 
-        title: 'Spin & Earn', 
-        description: 'Try your luck on the prize wheel.', 
-        href: '/dashboard/spin-earn', 
+    {
+        title: 'Free Spin',
+        description: 'Free Spin get max Rs 10',
+        reward: 10,
+        currentProgress: 406,
+        totalProgress: 595,
         icon: Trophy,
-        color: 'text-amber-500',
-        bg: 'bg-amber-500/10'
+        href: '/dashboard/spin-earn'
     },
-    { 
-        title: 'Withdraw Funds', 
-        description: 'Cash out your earnings.', 
-        href: '/dashboard/withdraw', 
-        icon: Banknote,
-        color: 'text-emerald-500',
-        bg: 'bg-emerald-500/10'
+    {
+        title: 'Daily check in',
+        description: 'Daily check in Rs 1',
+        reward: 1,
+        currentProgress: 0,
+        totalProgress: 1,
+        icon: Calendar,
+        href: '/dashboard/check-in'
     },
-    { 
-        title: 'Refer Friends', 
-        description: 'Earn more with your friends.', 
-        href: '/dashboard/refer', 
-        icon: Users,
-        color: 'text-violet-500',
-        bg: 'bg-violet-500/10'
-    },
-];
+    {
+        title: 'Bind mobile number',
+        description: '',
+        reward: 0,
+        currentProgress: 1,
+        totalProgress: 1,
+        icon: Phone,
+        href: '/dashboard/profile'
+    }
+]
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { toast } = useToast();
+  const router = useRouter();
 
   if (!user) {
     return (
@@ -80,77 +85,87 @@ export default function DashboardPage() {
     );
   }
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(user.referralCode);
-    toast({
-      title: "Copied to Clipboard",
-      description: `Your referral code ${user.referralCode} has been copied.`,
-    });
-  };
 
   return (
-    <>
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold font-headline">Welcome, {user.name}!</h1>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="shadow-lg">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Current Balance</CardTitle>
-            <Wallet className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">₹{user.balance.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">Available to withdraw</p>
-          </CardContent>
-        </Card>
-        <Card className="shadow-lg">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Earnings</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">₹{user.totalEarnings.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">Lifetime earnings</p>
-          </CardContent>
-        </Card>
-        <Card className="shadow-lg md:col-span-2 lg:col-span-1">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Your Referral Code</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <p className="text-2xl font-bold font-mono tracking-widest">{user.referralCode}</p>
-              <Button variant="ghost" size="icon" onClick={handleCopy}>
-                <Copy className="h-5 w-5" />
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground">Share this code with friends</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {featureCards.map((feature) => (
-            <Card key={feature.title} className="hover:shadow-xl transition-shadow group">
-                 <Link href={feature.href} className="block h-full">
-                    <CardHeader>
-                        <div className="flex items-center justify-between">
-                            <div className={cn("p-2 rounded-lg", feature.bg)}>
-                                <feature.icon className={cn("h-6 w-6", feature.color)} />
-                            </div>
-                            <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+    <div className="flex flex-col gap-4">
+        <Tabs defaultValue="earn" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 bg-secondary">
+            <TabsTrigger value="earn">DailyEarnList</TabsTrigger>
+            <TabsTrigger value="tasks">TaskDetail</TabsTrigger>
+            <TabsTrigger value="ranking">WealthRanking</TabsTrigger>
+          </TabsList>
+          <TabsContent value="earn" className="mt-4">
+                <Card className="bg-secondary/50">
+                    <CardContent className="p-4">
+                        <div className="flex justify-between items-center mb-2">
+                           <p className="font-bold">Daily Rs100</p>
                         </div>
-                    </CardHeader>
-                    <CardContent>
-                        <h3 className="text-lg font-semibold font-headline">{feature.title}</h3>
-                        <p className="text-sm text-muted-foreground">{feature.description}</p>
+                        <div className="flex items-center gap-2">
+                             <div className="relative w-full">
+                                <Progress value={33} className="h-3 bg-primary/20" indicatorClassName="bg-accent" />
+                                <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-accent border-2 border-background flex items-center justify-center text-xs font-bold text-accent-foreground">
+                                    +10
+                                </div>
+                                 <div className="absolute top-1/2 left-2/4 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-background border-2 border-accent flex items-center justify-center text-xs font-bold text-accent">
+                                    +50
+                                </div>
+                                <div className="absolute top-1/2 left-3/4 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-background border-2 border-accent flex items-center justify-center text-xs font-bold text-accent">
+                                    +100
+                                </div>
+                            </div>
+                        </div>
                     </CardContent>
-                </Link>
+                </Card>
+
+                <div className="flex flex-col gap-3 mt-4">
+                    {tasks.map(task => (
+                        <Card key={task.title} className="bg-primary/80 text-primary-foreground overflow-hidden">
+                            <CardContent className="p-3 flex items-center gap-4">
+                                <div className="p-3 bg-primary-foreground/20 rounded-lg">
+                                    <task.icon className="h-6 w-6" />
+                                </div>
+                                <div className="flex-1">
+                                    <div className="flex justify-between items-center">
+                                        <h3 className="font-bold">{task.title}</h3>
+                                        <p className="text-xs">({task.currentProgress} / {task.totalProgress})</p>
+                                    </div>
+                                    <div className="flex justify-between items-center mt-1">
+                                        <p className="text-xs opacity-80">{task.description}</p>
+                                        {task.reward > 0 && <p className="text-xs font-bold text-amber-300">+Rs{task.reward}</p>}
+                                    </div>
+                                </div>
+                                <Button size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold" onClick={() => router.push(task.href)}>
+                                    {task.currentProgress >= task.totalProgress ? <Check/> : "Get"}
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+                 <Button className="w-full mt-4 bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-lg h-12">Auto Get</Button>
+          </TabsContent>
+          <TabsContent value="tasks">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Task Details</CardTitle>
+                    <CardDescription>Details about available tasks will be shown here.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <p>Coming soon...</p>
+                </CardContent>
             </Card>
-        ))}
-      </div>
-    </>
+          </TabsContent>
+           <TabsContent value="ranking">
+                <Card>
+                <CardHeader>
+                    <CardTitle>Wealth Ranking</CardTitle>
+                    <CardDescription>See who is on top of the leaderboard.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <p>Coming soon...</p>
+                </CardContent>
+            </Card>
+           </TabsContent>
+        </Tabs>
+    </div>
   );
 }

@@ -80,16 +80,16 @@ export default function CheckInPage() {
         <div className="flex flex-col gap-6">
             <div className="flex items-start justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold font-headline">Daily Check-in</h1>
+                    <h1 className="text-3xl font-bold font-headline text-foreground">Daily Check-in</h1>
                     <p className="text-muted-foreground">Check in every day to earn rewards. Don't miss a day!</p>
                 </div>
-                 <Button onClick={handleCheckIn} disabled={!canCheckInToday}>
+                 <Button onClick={handleCheckIn} disabled={!canCheckInToday} className="bg-accent text-accent-foreground hover:bg-accent/90">
                     <CalendarCheck className="mr-2 h-4 w-4" />
                     {canCheckInToday ? `Check in for Day ${nextDay}` : "Checked in Today"}
                 </Button>
             </div>
            
-            <Card>
+            <Card className="bg-secondary">
                 <CardHeader>
                     <CardTitle>Your 7-Day Journey</CardTitle>
                 </CardHeader>
@@ -104,7 +104,7 @@ export default function CheckInPage() {
                                     key={day}
                                     className={cn(
                                         "rounded-lg p-4 text-center border-2 transition-all flex flex-col items-center justify-center aspect-square",
-                                        isCompleted ? "border-primary bg-primary/10 text-primary" : "border-dashed bg-card",
+                                        isCompleted ? "border-accent bg-accent/20 text-accent" : "border-dashed border-primary/50 bg-card",
                                         isNext && "border-accent bg-accent/20 animate-pulse",
                                         special && "lg:col-span-1 md:col-span-2 col-span-2"
                                     )}
